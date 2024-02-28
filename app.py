@@ -39,5 +39,19 @@ def add_user():
         last_name = last_name,
         image_url = image_url
     )
+
     db.session.add(new_user)
+    db.session.commit()
+
     return redirect('/users')
+
+@app.get("/users/<int:id>")
+def render_user_profile(id):
+    current_user = User.query.get_or_404(id)
+
+    first_name = current_user.first_name
+    last_name = current_user.last_name
+    image_url = current_user.image_url
+
+    return render_template("user_profile.html", first_name=first_name, last_name=last_name, image_url=image_url, id=id)
+

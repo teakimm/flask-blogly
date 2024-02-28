@@ -3,13 +3,15 @@
 {% block content %}
 
 <form action="/users" method="POST">
-  <label for="first_name"></label>
-<input type="text" name="first_name" id="first_name">
-  <label for="last_name"></label>
-<input type="text" name="last_name" id="last_name">
-  <label for="image_url"></label>
-<input type="text" name="image_url" id="image_url">
-<button>Add</button>
+  <label for="first_name">First Name:</label>
+  <input type="text" name="first_name" id="first_name" required>
+  <br>
+  <label for="last_name">Last Name:</label>
+  <input type="text" name="last_name" id="last_name" required>
+  <br>
+  <label for="image_url">Profile Picture URL:</label>
+  <input type="url" name="image_url" id="image_url" required>
+  <button>Add</button>
 </form>
 
 {% endblock %}
