@@ -3,7 +3,7 @@
 import os
 
 from flask import Flask, redirect, render_template, request
-from models import connect_db, User
+from models import connect_db, User, db
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -26,3 +26,18 @@ def render_user_page():
 @app.get("/users/new")
 def render_new_user_form():
     return render_template("new_user_form.html")
+
+@app.post('/users')
+def add_user():
+    form_data = request.form
+    first_name = form_data['first_name']
+    last_name = form_data['last_name']
+    image_url = form_data['image_url']
+
+    new_user = User(
+        first_name = first_name,
+        last_name = last_name,
+        image_url = image_url
+    )
+    db.session.add(new_user)
+    return redirect('/users')
