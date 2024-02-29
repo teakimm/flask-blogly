@@ -55,6 +55,7 @@ class UserViewTestCase(TestCase):
         db.session.rollback()
 
     def test_list_users(self):
+        ''' Tests if users are rendered correctly '''
         with app.test_client() as client:
 
             resp = client.get("/users")
@@ -64,8 +65,8 @@ class UserViewTestCase(TestCase):
             self.assertIn("test1_last", html)
 
     def test_new_user_form(self):
+        ''' Tests if new user is correctly added and rendered '''
         with app.test_client() as client:
-            print("****************************************************GHE")
             resp = client.post(
                 "/users",
                 data = {'first_name': "Bruce",
@@ -77,3 +78,34 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Bruce Willis", html)
+
+    def test_delete_user(self):
+        ''' Tests if user was deleted correctly '''
+        with app.test_client() as client:
+            # can just assign this as resp
+            client.post(
+                f'/users/{self.user_id}/delete',
+                follow_redirects=True)
+
+            # body = client.get('/')
+            # html = body.get_data(as_text=True)
+
+            # then pass in resp in the following tests
+            self.assertNotIn("test1_first", html)
+            self.assertNotIn("test1_last", html)
+
+    def test_user_profile(self):
+        ''' Tests if user profile is correctly rendered '''
+        with app.test_client() as client:
+            resp = client.get(
+                f'/users/{self.user_id}',
+            )
+
+            html = resp.get_data(as_text=True)
+
+            self.assertIn("test1_first", html)
+            self.assertIn("test1_last", html)
+            self.assertIn("<!-- Test working -->", html)
+
+# TODO: write 3 more pessimistic tests below, test failure paths
+            # nonexistent user_id, etc
