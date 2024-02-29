@@ -3,11 +3,14 @@
 <h2>{{ current_post.title }}</h2>
 <div>
   <p>{{ current_post.content }}</p>
-  <p>By {{ current_post.user.first_name }}</p>
+  <p>By <em>{{ current_post.user.first_name }} {{ current_post.user.last_name }}</em></p>
+  <p>At: {{ current_post.created_at }}</p>
 
 </div>
-<button>Cancel</button>
-<button>Edit</button>
+
+<a href="/users/{{current_post.user.id}}"><button>Go Back</button></a>
+<!-- how does hfref links work without leading / -->
+<a href="/posts/{{current_post.id}}/edit"><button>Edit</button></a>
 <button>Delete</button>
-<!-- cancel, edit delete buttons need to be added -->
+
 {% endblock %}

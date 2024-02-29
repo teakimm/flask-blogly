@@ -59,6 +59,7 @@ def add_user():
     return redirect('/users')
 
 
+
 @app.get("/users/<int:id>")
 def render_user_profile(id):
     ''' Renders user profile '''
@@ -119,17 +120,45 @@ def view_post(id):
 
     return render_template('post_detail.html', current_post=current_post)
 
+
+@app.get("/users/<int:id>/posts/new")
+def render_new_post_form(id):
+
+    current_user = User.query.get_or_404(id)
+
+    return render_template("new_post_form.html", current_user=current_user)
+
+
+@app.post("/users/<int:id>/posts/new")
+def handle_new_post(id):
+    form_data = request.form
+    title = form_data["title"]
+    content = form_data["content"]
+
+
+    new_post = Post(
+        title=title,
+        content=content,
+        user_id=id
+    )
+
+    db.session.add(new_post)
+    db.session.commit()
+
+    return redirect(f"/users/{id}")
+
+@app.get("/posts/<int:id>/edit")
+def render_edit_post_form(id):
+
+    current_post = Post.query.get_or_404(id)
+
+    return render_template("edit_post.html", current_post=current_post)
+
+
 '''
-GET /users/[user-id]/posts/new
-Show form to add a post for that user.
 
-POST /users/[user-id]/posts/new
-Handle add form; add post and redirect to the user detail page.
 
-GET /posts/[post-id]
-Show a post.
 
-Show buttons to edit and delete the post.
 
 GET /posts/[post-id]/edit
 Show form to edit a post, and to cancel (back to user page).
