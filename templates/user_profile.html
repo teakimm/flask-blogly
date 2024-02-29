@@ -2,11 +2,11 @@
 {% block content %}
 
 <div>
-  <h2>{{ first_name }} {{ last_name }}</h2>
-  <img src="{{ image_url }}" alt="Profile picture of {{ first_name }} {{ last_name }}">
+  <h2>{{ current_user.first_name }} {{ current_user.last_name }}</h2>
+  <img src="{{ current_user.image_url }}" alt="Profile picture of {{ current_user.first_name }} {{ current_user.last_name }}">
 </div>
 <a href="/users"><button>Go Back</button></a>
-<a href="/users/{{id}}/edit"><button>Edit</button></a>
-<a href="/users/{{id}}/delete"><button>Delete</button></a>
+<a href="/users/{{current_user.id}}/edit"><button>Edit</button></a>
+<a href="/users/{{current_user.id}}/delete"><button>Delete</button></a>
 
 {% endblock %}

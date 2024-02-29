@@ -33,6 +33,5 @@ class User(db.Model):
     image_url = db.Column(
         db.Text,
         nullable = False,
-        #TODO: add default url for image
-        default = ""
+        default = "https://shorturl.at/lrFV6"
     )

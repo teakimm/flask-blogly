@@ -32,7 +32,7 @@ def add_user():
     form_data = request.form
     first_name = form_data['first_name']
     last_name = form_data['last_name']
-    image_url = form_data['image_url']
+    image_url = form_data['image_url'] or None
 
     new_user = User(
         first_name = first_name,
@@ -49,9 +49,22 @@ def add_user():
 def render_user_profile(id):
     current_user = User.query.get_or_404(id)
 
-    first_name = current_user.first_name
-    last_name = current_user.last_name
-    image_url = current_user.image_url
+    return render_template("user_profile.html", current_user=current_user)
 
-    return render_template("user_profile.html", first_name=first_name, last_name=last_name, image_url=image_url, id=id)
+@app.get("/users/<int:id>/edit")
+def show_form(id):
+    current_user = User.query.get_or_404(id)
+
+    return render_template("edit_user.html", current_user=current_user)
+
+@app.post('/users/<int:id>/edit')
+def edit_user(id):
+    current_user = User.query.get_or_404(id)
+
+    current_user.first_name = request.form['first_name']
+    current_user.last_name = request.form['last_name']
+    current_user.image_url = request.form['image_url']
+
+    db.session.commit()
+    return redirect(f'/users/{id}')
 
