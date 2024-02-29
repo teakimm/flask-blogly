@@ -83,16 +83,14 @@ class UserViewTestCase(TestCase):
         ''' Tests if user was deleted correctly '''
         with app.test_client() as client:
             # can just assign this as resp
-            client.post(
+            resp = client.post(
                 f'/users/{self.user_id}/delete',
                 follow_redirects=True)
 
-            # body = client.get('/')
-            # html = body.get_data(as_text=True)
+            html = resp.get_data(as_text=True)
 
-            # then pass in resp in the following tests
-            self.assertNotIn("test1_first", html)
-            self.assertNotIn("test1_last", html)
+            self.assertIn(f"test1_first test1_last has been", html)
+
 
     def test_user_profile(self):
         ''' Tests if user profile is correctly rendered '''
@@ -107,5 +105,10 @@ class UserViewTestCase(TestCase):
             self.assertIn("test1_last", html)
             self.assertIn("<!-- Test working -->", html)
 
-# TODO: write 3 more pessimistic tests below, test failure paths
-            # nonexistent user_id, etc
+
+    def test_incorrect_user_route(self):
+        with app.test_client() as client:
+
+            resp = client.get("/users/9999")
+            self.assertEqual(resp.status_code, 404)
+

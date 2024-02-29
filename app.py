@@ -104,7 +104,6 @@ def delete_user(id):
 
     db.session.commit()
 
-    flash(f"User: {current_user.first_name} {current_user.last_name} \
-          has been deleted successfully")
+    flash(f"User: {current_user.first_name} {current_user.last_name} has been deleted successfully")
 
     return redirect("/")
