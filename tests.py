@@ -112,3 +112,19 @@ class UserViewTestCase(TestCase):
             resp = client.get("/users/9999")
             self.assertEqual(resp.status_code, 404)
 
+
+
+    def test_delete_post(self):
+        pass
+
+    def test_edit_post(self):
+        pass
+
+    def test_incorrect_post_route(self):
+        pass
+
+    def test_render_add_post_form(self):
+        pass
+
+    def test_add_post(self):
+        pass

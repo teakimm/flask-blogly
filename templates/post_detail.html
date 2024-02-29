@@ -11,6 +11,8 @@
 <a href="/users/{{current_post.user.id}}"><button>Go Back</button></a>
 <!-- how does hfref links work without leading / -->
 <a href="/posts/{{current_post.id}}/edit"><button>Edit</button></a>
-<button>Delete</button>
+<form action="/posts/{{ current_post.id }}/delete" method="POST">
+  <button>Delete</button>
+</form>
 
 {% endblock %}

@@ -7,9 +7,9 @@
   <input type="text" name="title" id="title" value="{{ current_post.title }}" required>
   <br>
   <label for="content">Content:</label>
-  <textarea name="content" id="content" cols="30" rows="10">{{ current_post.content }}</textarea>
+  <textarea name="content" id="content" cols="30" rows="10" required>{{ current_post.content }}</textarea>
   <br>
-  <button>Add</button>
+  <button>Edit</button>
 </form>
 <a href="/users/{{current_post.user.id}}"><button>Cancel</button></a>
 

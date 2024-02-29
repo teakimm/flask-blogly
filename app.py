@@ -88,13 +88,12 @@ def edit_user(id):
 
     current_user.first_name = request.form['first_name']
     current_user.last_name = request.form['last_name']
-    if(request.form['image_url'] == ""):
+
+    if not request.form['image_url']:
         # This is the edit area where None is not required
         current_user.image_url = DEFAULT_IMAGE_URL
     else:
         current_user.image_url = request.form['image_url']
-
-
 
     db.session.commit()
     return redirect(f'/users/{id}')
@@ -104,6 +103,8 @@ def edit_user(id):
 def delete_user(id):
     ''' Deletes user '''
     current_user = User.query.get_or_404(id)
+    # TODO: why doesn't current+user.posts.clear() work here?
+    Post.query.filter(Post.user_id == id).delete()
 
     db.session.delete(current_user)
 
@@ -116,6 +117,7 @@ def delete_user(id):
 
 @app.get("/posts/<int:id>")
 def view_post(id):
+    ''' View a post '''
     current_post = Post.query.get_or_404(id)
 
     return render_template('post_detail.html', current_post=current_post)
@@ -123,7 +125,7 @@ def view_post(id):
 
 @app.get("/users/<int:id>/posts/new")
 def render_new_post_form(id):
-
+    ''' Renders form for new post '''
     current_user = User.query.get_or_404(id)
 
     return render_template("new_post_form.html", current_user=current_user)
@@ -131,6 +133,7 @@ def render_new_post_form(id):
 
 @app.post("/users/<int:id>/posts/new")
 def handle_new_post(id):
+    ''' Adds new post'''
     form_data = request.form
     title = form_data["title"]
     content = form_data["content"]
@@ -149,23 +152,32 @@ def handle_new_post(id):
 
 @app.get("/posts/<int:id>/edit")
 def render_edit_post_form(id):
-
+    ''' Renders form to edit post '''
     current_post = Post.query.get_or_404(id)
 
     return render_template("edit_post.html", current_post=current_post)
 
+@app.post("/posts/<int:id>/edit")
+def edit_post(id):
+    ''' Handle form submission to edit existing post '''
+    current_post = Post.query.get_or_404(id)
 
-'''
+    current_post.title = request.form['title']
+    current_post.content = request.form['content']
+    current_post.created_at = db.func.now()
 
+    db.session.commit()
+    return redirect(f'/posts/{id}')
 
+@app.post('/posts/<int:id>/delete')
+def delete_post(id):
+    ''' Deletes post from posts and redirects to current user '''
+    current_post = Post.query.get_or_404(id)
 
+    db.session.delete(current_post)
+    db.session.commit()
 
-GET /posts/[post-id]/edit
-Show form to edit a post, and to cancel (back to user page).
+    flash(f"{current_post.title} has been deleted successfully")
 
-POST /posts/[post-id]/edit
-Handle editing of a post. Redirect back to the post view.
+    return redirect(f"/users/{current_post.user_id}")
 
-POST /posts/[post-id]/delete
-Delete the post.
-'''
