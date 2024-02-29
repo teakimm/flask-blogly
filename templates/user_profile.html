@@ -6,7 +6,12 @@
   <img src="{{ current_user.image_url }}" alt="Profile picture of {{ current_user.first_name }} {{ current_user.last_name }}">
 </div>
 <a href="/users"><button>Go Back</button></a>
+
 <a href="/users/{{current_user.id}}/edit"><button>Edit</button></a>
-<a href="/users/{{current_user.id}}/delete"><button>Delete</button></a>
+
+<form action="/users/{{current_user.id}}/delete" method="POST">
+  <button>Delete</button>
+</form>
+
 
 {% endblock %}

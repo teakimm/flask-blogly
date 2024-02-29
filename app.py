@@ -2,10 +2,12 @@
 
 import os
 
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, flash, session
 from models import connect_db, User, db
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "never-tell!"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///blogly')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -67,4 +69,17 @@ def edit_user(id):
 
     db.session.commit()
     return redirect(f'/users/{id}')
+
+@app.post("/users/<int:id>/delete")
+def delete_user(id):
+    current_user = User.query.get_or_404(id)
+
+    db.session.delete(current_user)
+
+    db.session.commit()
+
+    flash(f"User: {current_user.first_name} {current_user.last_name} \
+          has been deleted successfully")
+
+    return redirect("/")
 
