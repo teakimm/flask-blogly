@@ -3,7 +3,7 @@
 import os
 
 from flask import Flask, redirect, render_template, request, flash, session
-from models import connect_db, User, db
+from models import connect_db, User, db, DEFAULT_IMAGE_URL
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "never-tell!"
@@ -15,9 +15,11 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 connect_db(app)
 
+
 @app.get("/")
 def users_redirect():
     return redirect("/users")
+
 
 @app.get("/users")
 def render_user_page():
@@ -25,9 +27,11 @@ def render_user_page():
 
     return render_template("users_list.html", users=users)
 
+
 @app.get("/users/new")
 def render_new_user_form():
     return render_template("new_user_form.html")
+
 
 @app.post('/users')
 def add_user():
@@ -37,9 +41,9 @@ def add_user():
     image_url = form_data['image_url'] or None
 
     new_user = User(
-        first_name = first_name,
-        last_name = last_name,
-        image_url = image_url
+        first_name=first_name,
+        last_name=last_name,
+        image_url=image_url
     )
 
     db.session.add(new_user)
@@ -47,11 +51,13 @@ def add_user():
 
     return redirect('/users')
 
+
 @app.get("/users/<int:id>")
 def render_user_profile(id):
     current_user = User.query.get_or_404(id)
 
     return render_template("user_profile.html", current_user=current_user)
+
 
 @app.get("/users/<int:id>/edit")
 def show_form(id):
@@ -59,16 +65,23 @@ def show_form(id):
 
     return render_template("edit_user.html", current_user=current_user)
 
+
 @app.post('/users/<int:id>/edit')
 def edit_user(id):
     current_user = User.query.get_or_404(id)
 
     current_user.first_name = request.form['first_name']
     current_user.last_name = request.form['last_name']
-    current_user.image_url = request.form['image_url']
+    if(request.form['image_url'] == ""):
+        current_user.image_url = DEFAULT_IMAGE_URL
+    else:
+        current_user.image_url = request.form['image_url']
+
+
 
     db.session.commit()
     return redirect(f'/users/{id}')
+
 
 @app.post("/users/<int:id>/delete")
 def delete_user(id):
@@ -82,4 +95,3 @@ def delete_user(id):
           has been deleted successfully")
 
     return redirect("/")
-

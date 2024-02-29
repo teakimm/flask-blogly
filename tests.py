@@ -1,6 +1,6 @@
 import os
 
-os.environ["DATABASE_URL"] = "postgresql:///blogly_test"
+os.environ["DATABASE_URL"] = "postgresql:///blogly"
 
 from unittest import TestCase
 
@@ -55,9 +55,25 @@ class UserViewTestCase(TestCase):
         db.session.rollback()
 
     def test_list_users(self):
-        with app.test_client() as c:
-            resp = c.get("/users")
+        with app.test_client() as client:
+
+            resp = client.get("/users")
             self.assertEqual(resp.status_code, 200)
             html = resp.get_data(as_text=True)
             self.assertIn("test1_first", html)
             self.assertIn("test1_last", html)
+
+    def test_new_user_form(self):
+        with app.test_client() as client:
+            print("****************************************************GHE")
+            resp = client.post(
+                "/users",
+                data = {'first_name': "Bruce",
+                        "last_name" : "Willis",
+                        "image_url" : ""
+                        },
+                follow_redirects=True
+            )
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Bruce Willis", html)
