@@ -37,11 +37,11 @@ class User(db.Model):
         nullable = False,
         default = DEFAULT_IMAGE_URL
     )
+    # TODO: does this have to be 'users'?
+    posts = db.relationship("Post", backref="user")
 
-    posts = db.relationship("Post", backref="users")
 
-
-class Post(db.model):
+class Post(db.Model):
     """Blueprint for post table"""
 
     __tablename__ = "posts"

@@ -3,7 +3,7 @@
 import os
 
 from flask import Flask, redirect, render_template, request, flash, session
-from models import connect_db, User, db, DEFAULT_IMAGE_URL
+from models import connect_db, User, Post, db, DEFAULT_IMAGE_URL
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "never-tell!"
@@ -38,7 +38,7 @@ def render_new_user_form():
     return render_template("new_user_form.html")
 
 
-@app.post('/users')
+@app.post('/users/new')
 def add_user():
     ''' Adds user and redirects to users page '''
     form_data = request.form
@@ -63,8 +63,12 @@ def add_user():
 def render_user_profile(id):
     ''' Renders user profile '''
     current_user = User.query.get_or_404(id)
+    posts = current_user.posts
 
-    return render_template("user_profile.html", current_user=current_user)
+    return render_template(
+        "user_profile.html",
+        current_user=current_user,
+        posts=posts)
 
 
 @app.get("/users/<int:id>/edit")
@@ -107,3 +111,32 @@ def delete_user(id):
     flash(f"User: {current_user.first_name} {current_user.last_name} has been deleted successfully")
 
     return redirect("/")
+
+
+@app.get("/posts/<int:id>")
+def view_post(id):
+    current_post = Post.query.get_or_404(id)
+
+    return render_template('post_detail.html', current_post=current_post)
+
+'''
+GET /users/[user-id]/posts/new
+Show form to add a post for that user.
+
+POST /users/[user-id]/posts/new
+Handle add form; add post and redirect to the user detail page.
+
+GET /posts/[post-id]
+Show a post.
+
+Show buttons to edit and delete the post.
+
+GET /posts/[post-id]/edit
+Show form to edit a post, and to cancel (back to user page).
+
+POST /posts/[post-id]/edit
+Handle editing of a post. Redirect back to the post view.
+
+POST /posts/[post-id]/delete
+Delete the post.
+'''

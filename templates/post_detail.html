@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ current_post.title }}</h2>
+<div>
+  <p>{{ current_post.content }}</p>
+  <p>By {{ current_post.user.first_name }}</p>
+
+</div>
+<button>Cancel</button>
+<button>Edit</button>
+<button>Delete</button>
+<!-- cancel, edit delete buttons need to be added -->
+{% endblock %}
