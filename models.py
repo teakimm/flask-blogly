@@ -74,3 +74,60 @@ class Post(db.Model):
         nullable = False
     )
 
+    tags = db.relationship(
+        'Tag', secondary='posts_tags', backref='posts'
+    )
+
+class Tag(db.Model):
+
+    __tablename__ = 'tags'
+
+    id = db.Column(
+        db.Integer,
+        primary_key = True,
+        autoincrement = True
+    )
+
+    name = db.Column(
+        db.Text,
+        nullable = False,
+        unique = True
+    )
+
+    posts = db.relationship(
+        'Post', secondary='posts_tags', backref='tags'
+    )
+
+
+class PostTag(db.Model):
+
+    __tablename__ = 'posts_tags'
+
+    # can specify multi-column unique or check constraints like:
+    # __table_args__ = (
+    #    db.UniqueConstraint("col1", "col2"),
+    #    db.CheckConstraint("born <= died")
+
+    __table_args__ = db.UniqueConstraint("post_id", "tag_id"),
+
+    post_id = db.Column(
+        db.Integer,
+        db.ForeignKey("posts.id"),
+        primary_key=True
+    )
+
+    tag_id = db.Column(
+        db.Integer,
+        db.ForeignKey("tags.id"),
+        primary_key=True
+    )
+
+# bob = User(first_name='Bob', last_name="Ross", image_url="https://shorturl.at/bBUX0")
+
+# post1 = Post(title='My first post',
+#              content='asdfkl;jhasdfgl;khasdfgl;kasdfl;hkasdfghkl',
+#              user_id=1)
+
+# tag1 = Tag (id=1, name='Funny')
+
+# post_tag1 = PostTag(post_id=1, tag_id=1)
