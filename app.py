@@ -44,7 +44,6 @@ def add_user():
     form_data = request.form
     first_name = form_data['first_name']
     last_name = form_data['last_name']
-    # This handles the falsy value in the if statement in edit below
     image_url = form_data['image_url'] or None
 
     new_user = User(
@@ -57,7 +56,6 @@ def add_user():
     db.session.commit()
 
     return redirect('/users')
-
 
 
 @app.get("/users/<int:id>")
@@ -74,8 +72,7 @@ def render_user_profile(id):
 
 @app.get("/users/<int:id>/edit")
 def show_form(id):
-    # be more specific on this docstring, conflicts with above
-    ''' Shows user profile '''
+    ''' Renders form for editing user'''
     current_user = User.query.get_or_404(id)
 
     return render_template("edit_user.html", current_user=current_user)
@@ -103,14 +100,15 @@ def edit_user(id):
 def delete_user(id):
     ''' Deletes user '''
     current_user = User.query.get_or_404(id)
-    # TODO: why doesn't current+user.posts.clear() work here?
+    # TODO: why doesn't current_user.posts.clear() work here? use .delete()
     Post.query.filter(Post.user_id == id).delete()
 
     db.session.delete(current_user)
 
     db.session.commit()
 
-    flash(f"User: {current_user.first_name} {current_user.last_name} has been deleted successfully")
+    flash(
+        f"User: {current_user.first_name} {current_user.last_name} has been deleted successfully")
 
     return redirect("/")
 
@@ -130,14 +128,13 @@ def render_new_post_form(id):
 
     return render_template("new_post_form.html", current_user=current_user)
 
-
+#TODO: look for a user first
 @app.post("/users/<int:id>/posts/new")
 def handle_new_post(id):
     ''' Adds new post'''
     form_data = request.form
     title = form_data["title"]
     content = form_data["content"]
-
 
     new_post = Post(
         title=title,
@@ -150,12 +147,14 @@ def handle_new_post(id):
 
     return redirect(f"/users/{id}")
 
+
 @app.get("/posts/<int:id>/edit")
 def render_edit_post_form(id):
     ''' Renders form to edit post '''
     current_post = Post.query.get_or_404(id)
 
     return render_template("edit_post.html", current_post=current_post)
+
 
 @app.post("/posts/<int:id>/edit")
 def edit_post(id):
@@ -165,9 +164,11 @@ def edit_post(id):
     current_post.title = request.form['title']
     current_post.content = request.form['content']
     current_post.created_at = db.func.now()
+    #we would want another column instead since it's an edit
 
     db.session.commit()
     return redirect(f'/posts/{id}')
+
 
 @app.post('/posts/<int:id>/delete')
 def delete_post(id):
@@ -180,4 +181,3 @@ def delete_post(id):
     flash(f"{current_post.title} has been deleted successfully")
 
     return redirect(f"/users/{current_post.user_id}")
-
