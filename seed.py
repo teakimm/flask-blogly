@@ -18,11 +18,16 @@ post2 = Post(title='My second post',
              user_id=1)
 
 tag1 = Tag (id=1, name='Funny')
-post_tag1 = PostTag(post_id=1, tag_id=1)
+
+
 
 # Add new objects to session, so they'll persist
-db.session.add_all([bob, post1, post2, post_tag1, tag1])
+db.session.add_all([bob, post1, post2, tag1])
+db.session.commit()
 
+post_tag1 = PostTag(post_id=1, tag_id=1)
+
+db.session.add(post_tag1)
+db.session.commit()
 
 # Commit--otherwise, this never gets saved!
-db.session.commit()
